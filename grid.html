@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>#001</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+</head>
+<body>
+
+    <style> 
+        /* General Reset */
+        #audio-controls {
+            position: fixed;
+            bottom: 75px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        #audio-controls button {
+            background-color: #988f878f;
+            color: rgb(28, 3, 3);
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: 0.3s ease, color 0.3s ease;
+        }
+
+        body {
+            font-family: "TT Ricordi Marmo Trial Variable", serif;
+            margin: 0;
+            padding: 0;
+            background-color: #988F87;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; 
+            position: relative;
+        }
+
+        #menu {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: rgb(79, 73, 66);
+            height: 100vh;
+            left: 0;
+            opacity: 0;
+            position: fixed;
+            top: 0;
+            visibility: hidden;
+            width: 100%;
+            z-index: 1100;
+            transition: opacity 0.7s ease-in-out;
+        }
+
+        #menu.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .main-nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        .main-nav a {
+            color: rgb(45, 5, 5);
+            font-size: 1.5rem;
+            font-weight: 100;
+            text-decoration: none;
+            text-transform: uppercase;
+            padding: 1rem;
+            display: block;
+        }
+
+        .main-nav a:hover {
+            color: #c8b47d;
+        }
+
+        .toggle-menu {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            height: 50px;
+            width: 50px;
+            z-index: 1110;
+        }
+
+        .toggle-menu span {
+            display: block;
+            width: 35px;
+            height: 5px;
+            margin: 6px auto;
+            background-color: rgb(28, 3, 3);
+            transition: all 0.3s ease;
+        }
+
+        .toggle-menu.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .toggle-menu.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .toggle-menu.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        /* Corner Images */
+        .corner-img {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 50px;
+            height: auto;
+            cursor: pointer;
+            transition: opacity 0.7s ease-in-out;
+        }
+
+        .corner-img-left,
+        .corner-img-right {
+            position: fixed;
+            bottom: 20px;
+            width: 80px;
+            height: auto;
+            cursor: pointer;
+            z-index: 1000;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .corner-img-left {
+            left: 20px;
+        }
+
+        .corner-img-right {
+            right: 20px;
+        }
+
+        .corner-img-left:hover,
+        .corner-img-right:hover {
+            transform: scale(1.2);
+            opacity: 0.8;
+        }
+
+        #image-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            width: 80%;
+            margin: auto;
+        }
+
+        .grid-item {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .grid-item img {
+            width: 50%;
+            height: auto;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+            margin-left: 20%;
+        }
+
+        .grid-item img:hover {
+            transform: scale(1.1);
+        }
+
+        .hidden {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Decorative Lines */
+        #top-image, #bottom-image {
+            position: fixed;
+            width: 100%;
+            height: 10px;
+            z-index: 999;
+        }
+
+        #top-image {
+            top: 4px;
+        }
+
+        #bottom-image {
+            bottom: 4px;
+        }
+
+        /* Media Queries for Responsiveness */
+        @media (max-width: 1024px) {
+            body {
+                font-size: 14px;
+            }
+
+            #image-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+            }
+
+            .grid-item img {
+                width: 70%;
+            }
+
+            .toggle-menu {
+                top: 10px;
+                right: 10px;
+                width: 40px;
+                height: 40px;
+            }
+
+            .toggle-menu span {
+                width: 30px;
+                height: 4px;
+            }
+
+            #audio-controls {
+                bottom: 15px;
+                left: 15px;
+            }
+
+            #audio-controls button {
+                padding: 8px 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                font-size: 12px;
+            }
+
+            #image-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .grid-item img {
+                width:70%;
+                margin-left: 15%;
+            }
+
+            .toggle-menu {
+                top: 20px;
+                right: 5px;
+                width: 35px;
+                height: 35px;
+            }
+
+            .toggle-menu span {
+                width: 25px;
+                height: 3px;
+            }
+
+            #audio-controls {
+                bottom: 70px;
+                left: 10px;
+            }
+
+            #audio-controls button {
+                padding: 6px 12px;
+            }
+
+            #menu {
+                padding: 0 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="youtube-audio"></div>
+    <div id="audio-controls">
+        <button id="play-audio">on</button>
+        <button id="pause-audio">off</button>
+    </div>
+
+    <img id="top-image" src="arrow.png" alt="Top Decorative Line">
+    <img id="bottom-image" src="arrow.png" alt="Bottom Decorative Line">
+
+    <!-- Top-Left Corner Image -->
+    <a href="index.html">
+        <img class="corner-img" src="logo.png" alt="Go to Another Page">
+    </a>
+
+    <!-- Bottom-Left Corner Image -->
+    <a href="index.html">
+        <img class="corner-img-left" src="left.png" alt="Go to Page 1">
+    </a>
+
+    <!-- Bottom-Right Corner Image -->
+    <a href="item1.html">
+        <img class="corner-img-right" src="right.png" alt="Go to Page 2">
+    </a>
+
+    <!-- Hamburger Menu -->
+    <button class="toggle-menu" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Menu -->
+    <div id="menu">
+        <nav class="main-nav">
+            <ul>
+                <li><a href="grid.html">ALL OBJECTS</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Grid Container -->
+    <div id="image-grid">
+        <div class="grid-item"><a href="item1.html"><img src="1.PNG" alt="Image 1"></a></div>
+        <div class="grid-item"><a href="item2.html"><img src="2.PNG" alt="Image 2"></a></div>
+        <div class="grid-item"><a href="item3.html"><img src="3.PNG" alt="Image 3"></a></div>
+        <div class="grid-item"><a href="item4.html"><img src="4.PNG" alt="Image 4"></a></div>
+        <div class="grid-item"><a href="item5.html"><img src="5.PNG" alt="Image 5"></a></div>
+        <div class="grid-item"><a href="item6.html"><img src="6.PNG" alt="Image 6"></a></div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+
+                   // YouTube API Initialization
+                   let player;
+
+function onYouTubeIframeAPIReady() {
+    player = new YT.Player('youtube-audio', {
+        height: '0',
+        width: '0',
+        videoId: 'eU4DOg4yw3c',
+        playerVars: {
+            autoplay: 0,
+            loop: 1,
+            playlist: 'eU4DOg4yw3c',
+            modestbranding: 1
+        }
+    });
+}
+
+$(document).ready(function () {
+    // Play and Pause Audio
+    $('#play-audio').click(() => player?.playVideo());
+    $('#pause-audio').click(() => player?.pauseVideo());
+
+    // Toggle Menu
+    $('.toggle-menu').click(function () {
+        $(this).toggleClass('active');
+        $('#menu').toggleClass('open');
+    });
+});
+
+function toggleMenu() {
+            const menu = document.getElementById('menu');
+            const toggleButton = document.querySelector('.toggle-menu');
+            menu.classList.toggle('open');
+            toggleButton.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

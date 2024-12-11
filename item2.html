@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>#002</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+</head>
+<body>
+
+    <style>
+        /* General Body Styling */
+        body {
+            font-family: "TT Ricordi Marmo Trial Variable", serif;
+            margin: 0;
+            padding: 0;
+            background-color: #988F87;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; 
+            position: relative; 
+        }
+
+        #menu {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: rgb(79, 73, 66);
+            height: 100vh;
+            left: 0;
+            opacity: 0;
+            position: fixed;
+            top: 0;
+            visibility: hidden;
+            width: 100%;
+            z-index: 1100;
+            transition: opacity 0.7s ease-in-out;
+        }
+
+        #menu.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .main-nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        .main-nav a {
+            color: rgb(45, 5, 5);
+            font-size: 1.5rem;
+            font-weight: 00;
+            text-decoration: none;
+            text-transform: uppercase;
+            padding: 1rem;
+            display: block;
+        }
+
+        .main-nav a:hover {
+            color: #c8b47d;
+        }
+
+        .toggle-menu {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            display: inline-block;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            height: 50px;
+            width: 50px;
+            z-index: 1110;
+        }
+
+        .toggle-menu span {
+            display: block;
+            width: 35px;
+            height: 5px;
+            margin: 6px auto;
+            background-color: rgb(28, 3, 3);
+            transition: all 0.3s ease;
+        }
+
+        .toggle-menu.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .toggle-menu.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .toggle-menu.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        /* Top-Left Corner Image */
+        .corner-img {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 50px; /* Adjust the size of the image */
+            height: auto;
+            cursor: pointer;
+            transition: opacity 0.7s ease-in-out;
+        }
+
+        /* Bottom-Left and Bottom-Right Corner Images */
+        .corner-img-left,
+        .corner-img-right {
+            position: fixed;
+            bottom: 20px; /* Position from bottom */
+            width: 80px; /* Adjust image size */
+            height: auto;
+            cursor: pointer;
+            z-index: 1000; /* Ensure images are above other elements */
+            transition: transform 0.3s ease, opacity 0.3s ease; /* Smooth scaling */
+        }
+
+        .corner-img-left {
+            left: 20px; /* Position from left */
+        }
+
+        .corner-img-right {
+            right: 20px; /* Position from right */
+        }
+
+        .corner-img-left:hover,
+        .corner-img-right:hover {
+            transform: scale(1.2); /* Enlarge by 20% */
+            opacity: 0.8; /* Slightly reduce opacity */
+        }
+
+        /* Anatomy Container */
+        #anatomy {
+            position: relative;
+            width: 100%; /* Adjust based on your layout */
+            max-width: 1500px;
+        }
+
+        /* Tablet-specific styles */
+@media (max-width: 1024px) {
+    .anatomy-img {
+        margin-top: 50%;
+        padding: 20px;
+    }
+
+    .anatomy-img img {
+        width: 75%; /* Reduce the image size for tablet */
+    }
+}
+
+@media (max-width: 768px) {
+    .anatomy-img {
+        margin-top: 50%;
+        padding: 15px;
+
+    }
+
+    .anatomy-img img {
+        width: 65%; /* Further reduce the image size for smaller tablets */
+    }
+}
+
+        .anatomy-img {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .anatomy-img img {
+            width: 85%;
+            height: auto;
+            position: relative;
+            animation: glitch-animation 2s steps(10) infinite;
+        }
+
+        /* Glitch Layers */
+        .anatomy-img img::before,
+        .anatomy-img img::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: inherit;
+            clip-path: inset(0 0 50% 0);
+        }
+
+        .anatomy-img img::before {
+            animation: glitch-layer1 2s steps(8) infinite;
+            background: rgba(255, 0, 0, 0.5);
+        }
+
+        .anatomy-img img::after {
+            animation: glitch-layer2 2s steps(6) infinite;
+            background: rgba(0, 255, 0, 0.5);
+        }
+
+        /* Keyframes for Base Animation */
+        @keyframes glitch-animation {
+            0% {
+                transform: translate(0, 0);
+            }
+            20% {
+                transform: translate(-3px, -3px);
+            }
+            40% {
+                transform: translate(3px, -3px);
+            }
+            60% {
+                transform: translate(-3px, 3px);
+            }
+            80% {
+                transform: translate(3px, 3px);
+            }
+            100% {
+                transform: translate(0, 0);
+            }
+        }
+
+        /* Keyframes for Glitch Layers */
+        @keyframes glitch-layer1 {
+            0% {
+                clip-path: inset(0 0 80% 0);
+                transform: translate(-3px, -3px);
+            }
+            50% {
+                clip-path: inset(0 0 30% 0);
+                transform: translate(3px, 3px);
+            }
+            100% {
+                clip-path: inset(0 0 80% 0);
+                transform: translate(-3px, -3px);
+            }
+        }
+
+        @keyframes glitch-layer2 {
+            0% {
+                clip-path: inset(80% 0 0 0);
+                transform: translate(3px, 3px);
+            }
+            50% {
+                clip-path: inset(30% 0 0 0);
+                transform: translate(-3px, -3px);
+            }
+            100% {
+                clip-path: inset(80% 0 0 0);
+                transform: translate(3px, 3px);
+            }
+        }
+
+        /* Decorative Lines */
+        #top-image, #bottom-image {
+            position: fixed;
+            width: 100%;
+            height: 10px;
+            z-index: 999;
+        }
+
+        #top-image {
+            top: 4px;
+        }
+
+        #bottom-image {
+            bottom: 4px;
+        }
+
+        #audio-controls {
+            position: fixed;
+            bottom: 75px;
+            left: 20px;
+            z-index: 1000;
+        }
+
+        #audio-controls button {
+            background-color: #988f878f;
+            color: rgb(28, 3, 3);
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: 0.3s ease, color 0.3s ease;
+        }
+
+        /* Media Queries for Responsiveness */
+        @media (max-width: 1024px) {
+            body {
+                font-size: 14px;
+            }
+
+            .anatomy-img img {
+                width: 95%;
+            }
+
+            .toggle-menu {
+                top: 25px;
+                right: 10px;
+                width: 40px;
+                height: 40px;
+            }
+
+            .toggle-menu span {
+                width: 30px;
+                height: 4px;
+            }
+
+            #audio-controls {
+                bottom: 35px;
+                left: 15px;
+            }
+
+            #audio-controls button {
+                padding: 8px 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                font-size: 12px;
+            }
+
+            .anatomy-img img {
+                width: 100%;
+            }
+
+            .toggle-menu {
+                top: 25px;
+                right: 5px;
+                width: 35px;
+                height: 35px;
+            }
+
+            .toggle-menu span {
+                width: 25px;
+                height: 3px;
+            }
+
+            #audio-controls {
+                bottom: 60px;
+                left: 10px;
+            }
+
+            #audio-controls button {
+                padding: 6px 12px;
+            }
+
+            #menu {
+                padding: 0 10px;
+            }
+        }
+    </style>
+
+    <div id="youtube-audio"></div>
+    <div id="audio-controls">
+        <button id="play-audio">on</button>
+        <button id="pause-audio">off</button>
+    </div>
+
+    <a href="index.html">
+        <img class="corner-img" src="logo.png" alt="Go to Another Page">
+    </a>
+
+    <!-- Bottom-Left Corner Image -->
+    <a href="item1.html">
+        <img class="corner-img-left" src="left.png" alt="Go to Page 1">
+    </a>
+
+    <!-- Bottom-Right Corner Image -->
+    <a href="item3.html">
+        <img class="corner-img-right" src="right.png" alt="Go to Page 2">
+    </a>
+
+    <!-- Hamburger Menu -->
+    <button class="toggle-menu" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <img id="top-image" src="arrow.png" alt="Top Decorative Line">
+    <img id="bottom-image" src="arrow.png" alt="Bottom Decorative Line">
+
+    <!-- Menu -->
+    <div id="menu">
+        <nav class="main-nav">
+            <ul>
+                <li><a href="grid.html">ALL OBJECTS</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="anatomy-img">
+        <picture>
+            <source srcset="responsive-08.png" media="(max-width: 1024px)">
+            <source srcset="responsive-08.png" media="(max-width: 768px)">
+            <img src="anatomy-02.png" alt="Anatomy" style="width: 100%; height: auto;">
+        </picture>
+    </div>
+
+
+    <!-- Scripts -->
+    <script>
+        // YouTube API Initialization
+        let player;
+
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtube-audio', {
+                height: '0',
+                width: '0',
+                videoId: 'eU4DOg4yw3c',
+                playerVars: {
+                    autoplay: 0,
+                    loop: 1,
+                    playlist: 'eU4DOg4yw3c',
+                    modestbranding: 1
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            // Play and Pause Audio
+            $('#play-audio').click(() => player?.playVideo());
+            $('#pause-audio').click(() => player?.pauseVideo());
+
+            // Toggle Menu
+            $('.toggle-menu').click(function () {
+                $(this).toggleClass('active');
+                $('#menu').toggleClass('open');
+            });
+        });
+
+        function toggleMenu() {
+            const menu = document.getElementById('menu');
+            const toggleButton = document.querySelector('.toggle-menu');
+            menu.classList.toggle('open');
+            toggleButton.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
